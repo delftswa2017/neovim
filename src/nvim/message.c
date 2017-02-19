@@ -270,32 +270,16 @@ void trunc_string(char_u *s, char_u *buf, int room, int buflen)
   }
 
   /* Last part: End of the string. */
-  i = e;
-  if (enc_dbcs != 0) {
-    /* For DBCS going backwards in a string is slow, but
-     * computing the cell width isn't too slow: go forward
-     * until the rest fits. */
-    n = vim_strsize(s + i);
-    while (len + n > room) {
-      n -= ptr2cells(s + i);
-      i += (*mb_ptr2len)(s + i);
-    }
-  } else if (enc_utf8) {
-    /* For UTF-8 we can go backwards easily. */
-    half = i = (int)STRLEN(s);
-    for (;; ) {
-      do
-        half = half - (*mb_head_off)(s, s + half - 1) - 1;
-      while (utf_iscomposing(utf_ptr2char(s + half)) && half > 0);
-      n = ptr2cells(s + half);
-      if (len + n > room)
-        break;
-      len += n;
-      i = half;
-    }
-  } else {
-    for (i = (int)STRLEN(s); len + (n = ptr2cells(s + i - 1)) <= room; --i)
-      len += n;
+  half = i = (int)STRLEN(s);
+  for (;; ) {
+    do
+      half = half - (*mb_head_off)(s, s + half - 1) - 1;
+    while (utf_iscomposing(utf_ptr2char(s + half)) && half > 0);
+    n = ptr2cells(s + half);
+    if (len + n > room)
+      break;
+    len += n;
+    i = half;
   }
 
   if (i <= e + 3) {
