@@ -4885,7 +4885,7 @@ void win_redr_status(win_T *wp)
     if (this_ru_col <= 1) {
       p = (char_u *)"<";                /* No room for file name! */
       len = 1;
-    } else if (has_mbyte) {
+    } else {
       int clen = 0, i;
 
       /* Count total number of display cells. */
@@ -4902,11 +4902,6 @@ void win_redr_status(win_T *wp)
         *p = '<';
         ++len;
       }
-
-    } else if (len > this_ru_col - 1) {
-      p += len - (this_ru_col - 1);
-      *p = '<';
-      len = this_ru_col - 1;
     }
 
     row = wp->w_winrow + wp->w_height;
