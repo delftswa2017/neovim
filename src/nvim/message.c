@@ -269,15 +269,16 @@ void trunc_string(char_u *s, char_u *buf, int room, int buflen)
       }
   }
 
-  /* Last part: End of the string. */
+  // Last part: End of the string.
   half = i = (int)STRLEN(s);
-  for (;; ) {
-    do
+  for (;;) {
+    do {
       half = half - (*mb_head_off)(s, s + half - 1) - 1;
-    while (utf_iscomposing(utf_ptr2char(s + half)) && half > 0);
+    } while (utf_iscomposing(utf_ptr2char(s + half)) && half > 0);
     n = ptr2cells(s + half);
-    if (len + n > room)
+    if (len + n > room) {
       break;
+    }
     len += n;
     i = half;
   }
